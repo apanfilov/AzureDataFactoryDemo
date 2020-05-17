@@ -1,0 +1,6 @@
+{
+	"name": "SelfHostedIntegrationalRuntime",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
