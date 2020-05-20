@@ -1,0 +1,8 @@
+{
+	"name": "PostgreSqlTable1",
+	"properties": {
+		"annotations": [],
+		"type": "PostgreSqlTable",
+		"schema": []
+	}
+}
