@@ -1,0 +1,33 @@
+{
+	"name": "DailyOnceTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Test_join_pipeline",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-05-20T12:20:00.000Z",
+				"endTime": "2020-05-21T12:20:00.000Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						24
+					],
+					"hours": [
+						12
+					]
+				}
+			}
+		}
+	}
+}
