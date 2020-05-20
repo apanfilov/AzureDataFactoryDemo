@@ -1,0 +1,54 @@
+{
+	"name": "df_NocData",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "csv_noc_regions",
+						"type": "DatasetReference"
+					},
+					"name": "NOCRegions"
+				},
+				{
+					"dataset": {
+						"referenceName": "csv_Athlete_events",
+						"type": "DatasetReference"
+					},
+					"name": "AthleteEvent"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "NocMedalData",
+						"type": "DatasetReference"
+					},
+					"name": "ParquetSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilteredAthleteEvents"
+				},
+				{
+					"name": "Joined"
+				},
+				{
+					"name": "CountMedals"
+				},
+				{
+					"name": "MedalSplitted"
+				},
+				{
+					"name": "GenAthletheColumns"
+				},
+				{
+					"name": "RenameCommitee"
+				}
+			],
+			"script": "source(output(\n\t\tNOC as string,\n\t\tregion as string,\n\t\tnotes as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true) ~> NOCRegions\nsource(output(\n\t\tID as string,\n\t\tName as string,\n\t\tSex as string,\n\t\tAge as integer '000',\n\t\tHeight as string,\n\t\tWeight as string,\n\t\tTeam as string,\n\t\tNOC as string,\n\t\tGames as string,\n\t\tYear as integer '000',\n\t\tSeason as string,\n\t\tCity as string,\n\t\tSport as string,\n\t\tEvent as string,\n\t\tMedal as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> AthleteEvent\nAthleteEvent filter(Medal != 'NA') ~> FilteredAthleteEvents\nGenAthletheColumns, RenameCommitee join(GenAthletheColumns@NOC == RenameCommitee@NOC,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Joined\nJoined aggregate(groupBy(GenAthletheColumns@NOC,\n\t\tCommitee),\n\tGold = sum(Gold),\n\t\tSilver = sum(Silver),\n\t\tBronze = sum(Bronze),\n\tpartitionBy('hash', 1)) ~> CountMedals\nFilteredAthleteEvents derive(Gold = case(Medal == 'Gold', 1, 0),\n\t\tSilver = case(Medal == 'Silver', 1, 0),\n\t\tBronze = case(Medal == 'Bronze', 1, 0)) ~> MedalSplitted\nMedalSplitted select(mapColumn(\n\t\tNOC,\n\t\tGold,\n\t\tSilver,\n\t\tBronze\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> GenAthletheColumns\nNOCRegions select(mapColumn(\n\t\tNOC,\n\t\tCommitee = region\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RenameCommitee\nCountMedals sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ParquetSink"
+		}
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "NocMedalData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "apdatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "gold/noc_medal_data",
+				"fileSystem": "ap-datalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
