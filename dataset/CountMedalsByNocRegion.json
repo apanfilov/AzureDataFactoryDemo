@@ -1,0 +1,49 @@
+{
+	"name": "CountMedalsByNocRegion",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "apdatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "silver",
+				"fileSystem": "ap-datalake"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Season",
+				"type": "UTF8"
+			},
+			{
+				"name": "Year",
+				"type": "UTF8"
+			},
+			{
+				"name": "City",
+				"type": "UTF8"
+			},
+			{
+				"name": "Commitee",
+				"type": "UTF8"
+			},
+			{
+				"name": "Sex",
+				"type": "UTF8"
+			},
+			{
+				"name": "Medal",
+				"type": "UTF8"
+			},
+			{
+				"name": "MedalCount",
+				"type": "INT64"
+			}
+		]
+	}
+}
